@@ -7,7 +7,6 @@ export class BranchController {
 
   @Get()
   async getBranch() {
-    const branch = await this.branchService.getAllBranch();
-    return branch.map((branch) => branch.detail);
+    return this.branchService.getAllBranch();
   }
 }

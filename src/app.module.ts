@@ -4,8 +4,9 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MenuModule } from './menu/menu.module';
 import { BannerModule } from './banner/banner.module';
+import { BranchModule } from './branch/branch.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PrismaModule, MenuModule, BannerModule],
+  imports: [UserModule, AuthModule, PrismaModule, MenuModule, BannerModule, BranchModule],
 })
 export class AppModule {}

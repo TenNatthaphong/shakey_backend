@@ -7,7 +7,7 @@ export class BannerController {
 
   @Get()
   async getBanners() {
-    const banners = await this.bannerService.findAll();
+    const banners = await this.bannerService.findAllBanner();
     return banners.map((banner) => banner.image);
   }
 }

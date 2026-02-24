@@ -39,7 +39,6 @@ model Address {
 model Branch {
   branch_id  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   detail     String
-  created_at DateTime? @default(now()) @db.Timestamp(6)
 
   @@map("branches")
 }

@@ -57,9 +57,9 @@ model Banner {
 model Reward {
   reward_id     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   image         String?
-  header        String?
+  name          String?
   require_point Int
-  condition     String?
+  description   String?
   exp_date      DateTime?    @db.Date
   created_at    DateTime?    @default(now()) @db.Timestamp(6)
   user_rewards  UserReward[]

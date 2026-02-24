@@ -8,8 +8,18 @@ import { BranchModule } from './branch/branch.module';
 import { AddressModule } from './address/address.module';
 import { MemberModule } from './member/member.module';
 import { ToppingModule } from './topping/topping.module';
+import { RewardModule } from './reward/reward.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PrismaModule, MenuModule, BannerModule, BranchModule, AddressModule, MemberModule, ToppingModule],
+  imports: [UserModule,
+    AuthModule,
+    PrismaModule,
+    MenuModule,
+    BannerModule,
+    BranchModule,
+    AddressModule,
+    MemberModule,
+    ToppingModule,
+    RewardModule],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { MenuService } from './menu.service';
 
 @Controller('menu')
@@ -10,8 +10,8 @@ export class MenuController {
     return this.menuService.findAllMenu();
   }
 
-  @Get('favorite')
-  async getFavoriteMenus(@Query('userId') userId: string) {
+  @Get('favorite/:userId')
+  async getFavoriteMenus(@Param('userId') userId: string) {
     return this.menuService.findFavoriteMenus(userId);
   }
 }

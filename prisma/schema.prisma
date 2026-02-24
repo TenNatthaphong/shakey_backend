@@ -17,7 +17,7 @@ model User {
   pin                  Int?
   created_at           DateTime?    @default(now()) @db.Timestamp(6)
   updated_at           DateTime?    @default(now()) @updatedAt @db.Timestamp(6)
-  total_cups_purchased Int?         @default(0) @db.SmallInt
+  total_cups_purchased Int          @default(0) @db.SmallInt
   addresses            Address[]
   favorites            Favorite[]
   member               Member?
@@ -61,7 +61,6 @@ model Reward {
   require_point Int
   condition     String?
   exp_date      DateTime?    @db.Date
-  invoke        Boolean?     @default(false)
   created_at    DateTime?    @default(now()) @db.Timestamp(6)
   user_rewards  UserReward[]
 
@@ -79,14 +78,13 @@ model UserReward {
 }
 
 model Member {
-  member_id  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id    String?   @unique @db.Uuid
-  level      String    @default("Bronze")
-  start_date DateTime? @db.Date
-  exp_date   DateTime? @db.Date
-  benefit    String?
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  user       User?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  member_id  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String       @unique @db.Uuid
+  start_date DateTime?    @db.Date
+  exp_date   DateTime?    @db.Date
+  created_at DateTime?    @default(now()) @db.Timestamp(6)
+  level      Member_level @default(Bronze)
+  user       User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("members")
 }
@@ -94,7 +92,7 @@ model Member {
 model Menu {
   menu_id       String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   image         String?
-  flavor        String?       @unique
+  flavor        String        @unique
   size          String?
   price         Int
   rating        Float?        @default(0)
@@ -160,4 +158,10 @@ model Favorite {
 
   @@id([user_id, menu_id])
   @@map("favorites")
+}
+
+enum Member_level {
+  Bronze
+  Silver
+  Gold
 }

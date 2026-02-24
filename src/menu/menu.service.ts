@@ -5,7 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class MenuService {
   constructor(private prisma: PrismaService) {}
 
-  // ดึงเมนูทั้งหมด
   async findAllMenu() {
     return this.prisma.menu.findMany({
       select: {
@@ -19,7 +18,6 @@ export class MenuService {
     });
   }
 
-  // ดึงเฉพาะ Favorite ของ userId นั้นๆ
   async findFavoriteMenus(userId: string) {
     return this.prisma.menu.findMany({
       where: {

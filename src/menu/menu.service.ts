@@ -5,18 +5,38 @@ import { PrismaService } from '../prisma/prisma.service';
 export class MenuService {
   constructor(private prisma: PrismaService) {}
 
-  async createMenu(data: {
-    flavor?: string;
-    size?: string;
-    price: number;
-    image?: string;
-  }) {
-    return this.prisma.menu.create({
-      data,
+  // ดึงเมนูทั้งหมด
+  async findAllMenu() {
+    return this.prisma.menu.findMany({
+      select: {
+        menu_id: true,
+        image: true,
+        flavor: true,
+        size: true,
+        price: true,
+        rating: true,
+      },
     });
   }
 
-  async findAll() {
-    return this.prisma.menu.findMany();
+  // ดึงเฉพาะ Favorite ของ userId นั้นๆ
+  async findFavoriteMenus(userId: string) {
+    return this.prisma.menu.findMany({
+      where: {
+        favorites: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+      select: {
+        menu_id: true,
+        image: true,
+        flavor: true,
+        size: true,
+        price: true,
+        rating: true,
+      },
+    });
   }
 }

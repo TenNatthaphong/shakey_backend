@@ -13,6 +13,7 @@ export class MenuService {
         flavor: true,
         size: true,
         price: true,
+        discount: true,
         rating: true,
       },
     });

@@ -9,6 +9,7 @@ import { AddressModule } from './address/address.module';
 import { MemberModule } from './member/member.module';
 import { ToppingModule } from './topping/topping.module';
 import { RewardModule } from './reward/reward.module';
+import { OrderDetailModule } from './order_detail/order_detail.module';
 
 @Module({
   imports: [UserModule,
@@ -20,6 +21,7 @@ import { RewardModule } from './reward/reward.module';
     AddressModule,
     MemberModule,
     ToppingModule,
-    RewardModule],
+    RewardModule,
+    OrderDetailModule],
 })
 export class AppModule {}

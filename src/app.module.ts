@@ -12,7 +12,8 @@ import { RewardModule } from './reward/reward.module';
 import { OrderDetailModule } from './order_detail/order_detail.module';
 
 @Module({
-  imports: [UserModule,
+  imports: [
+    UserModule,
     AuthModule,
     PrismaModule,
     MenuModule,
@@ -22,6 +23,7 @@ import { OrderDetailModule } from './order_detail/order_detail.module';
     MemberModule,
     ToppingModule,
     RewardModule,
-    OrderDetailModule],
+    OrderDetailModule,
+  ],
 })
 export class AppModule {}

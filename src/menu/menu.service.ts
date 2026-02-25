@@ -11,8 +11,7 @@ export class MenuService {
         menu_id: true,
         image: true,
         flavor: true,
-        size: true,
-        price: true,
+        base_price: true,
         discount: true,
         rating: true,
       },
@@ -32,9 +31,22 @@ export class MenuService {
         menu_id: true,
         image: true,
         flavor: true,
-        size: true,
-        price: true,
+        base_price: true,
+        discount: true,
         rating: true,
+      },
+    });
+  }
+
+  async findMenuVariant(menuId: string) {
+    return this.prisma.menuVariant.findMany({
+      where: {
+        menu_id: menuId,
+      },
+      select: {
+        variant_id: true,
+        size: true,
+        price_upsize: true,
       },
     });
   }

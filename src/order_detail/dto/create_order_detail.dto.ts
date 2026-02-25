@@ -1,11 +1,11 @@
-import { sweetness } from "@prisma/client";
+import { Sweetness } from "@prisma/client";
 
 export class CreateOrderDetailDto {
-    menu_id: number;
+    order_id: string;
+    variant_id: string;
     quantity: number;
-    price: number;
-    total_price: number;
-    sweetness: sweetness;
-    size: size;
-    note: string;
+    sweetness: Sweetness;
+    price: number; // base_price + upsize - discount
+    note?: string;
+    topping_ids: string[]; 
 }

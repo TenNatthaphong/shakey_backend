@@ -90,13 +90,15 @@ model Member {
 }
 
 model Menu {
-  menu_id      String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  image        String?
-  flavor       String        @unique
-  rating       Float?        @default(0)
-  created_at   DateTime?     @default(now()) @db.Timestamp(6)
-  favorites    Favorite[]
-  variants     MenuVariant[]
+  menu_id    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image      String?
+  flavor     String        @unique
+  rating     Float?        @default(0)
+  created_at DateTime?     @default(now()) @db.Timestamp(6)
+  discount   Int           @default(0) @db.SmallInt
+  base_price Int           @default(0)
+  favorites  Favorite[]
+  variants   MenuVariant[]
 
   @@map("menus")
 }
@@ -105,8 +107,7 @@ model MenuVariant {
   variant_id    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   menu_id       String        @db.Uuid
   size          Size
-  price         Int
-  discount      Int           @default(0) @db.SmallInt
+  price_upsize  Int           @default(0)
   menu          Menu          @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade, onUpdate: NoAction)
   order_details OrderDetail[]
 
@@ -139,13 +140,14 @@ model Order {
 model OrderDetail {
   order_detail_id       String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   order_id              String?              @db.Uuid
-  variant_id            String?              @db.Uuid
   quantity              Int
   sweetness             Sweetness?           @default(Sweet_100)
   price                 Int
+  variant_id            String?              @db.Uuid
+  note                  String?
   order_detail_toppings OrderDetailTopping[]
-  variant               MenuVariant?         @relation(fields: [variant_id], references: [variant_id], onDelete: NoAction, onUpdate: NoAction)
   order                 Order?               @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+  variant               MenuVariant?         @relation(fields: [variant_id], references: [variant_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("order_details")
 }
@@ -170,7 +172,6 @@ model Favorite {
   @@id([user_id, menu_id])
   @@map("favorites")
 }
-
 
 enum Member_level {
   Bronze

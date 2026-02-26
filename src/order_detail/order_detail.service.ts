@@ -6,19 +6,23 @@ import { CreateOrderDetailDto } from './dto/create_order_detail.dto';
 export class OrderDetailService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async createOrderDetail(dto: CreateOrderDetailDto) {
-        const { topping_ids, ...data } = dto;
 
-        return this.prisma.orderDetail.create({
-            data: {
-                ...data,
-                order_detail_toppings: {
-                    create: topping_ids.map(id => ({
-                        topping_id: id
-                    }))
-                }
-            },
-        });
+    async createOrderDetails(dtos: CreateOrderDetailDto[]) {
+        return this.prisma.$transaction(
+            dtos.map(dto => {
+                const { topping_ids, ...data } = dto;
+                return this.prisma.orderDetail.create({
+                    data: {
+                        ...data,
+                        order_detail_toppings: {
+                            create: topping_ids.map(id => ({
+                                topping_id: id
+                            }))
+                        }
+                    }
+                });
+            })
+        );
     }
 
     async getOrderDetail(order_id: string) {

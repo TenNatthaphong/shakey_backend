@@ -7,8 +7,8 @@ export class OrderDetailController {
     constructor(private readonly orderDetailService: OrderDetailService) { }
 
     @Post()
-    async createOrderDetail(@Body() createOrderDetail: CreateOrderDetailDto) {
-        return this.orderDetailService.createOrderDetail(createOrderDetail);
+    async createOrderDetails(@Body() createOrderDetails: CreateOrderDetailDto[]) {
+        return this.orderDetailService.createOrderDetails(createOrderDetails);
     }
 
     @Get(':order_id')

@@ -4,7 +4,7 @@ import { CreateOrderDetailDto } from './dto/create_order_detail.dto';
 
 @Injectable()
 export class OrderDetailService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async createOrderDetail(dto: CreateOrderDetailDto) {
         const { topping_ids, ...data } = dto;
@@ -18,11 +18,24 @@ export class OrderDetailService {
                     }))
                 }
             },
-            include: {
-                order_detail_toppings: true,
-                variant: true
-            }
         });
     }
 
+    async getOrderDetail(order_id: string) {
+        return this.prisma.orderDetail.findMany({
+            where: { order_id },
+            include: {
+                order_detail_toppings: {
+                    include: {
+                        topping: true
+                    },
+                },
+                variant: {
+                    include: {
+                        menu: true
+                    }
+                }
+            }
+        });
+    }
 }

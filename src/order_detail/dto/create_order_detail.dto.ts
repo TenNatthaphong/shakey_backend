@@ -1,7 +1,6 @@
 import { Sweetness } from "@prisma/client";
 
 export class CreateOrderDetailDto {
-    order_id: string;
     variant_id: string;
     quantity: number;
     sweetness: Sweetness;

@@ -10,6 +10,7 @@ import { MemberModule } from './member/member.module';
 import { ToppingModule } from './topping/topping.module';
 import { RewardModule } from './reward/reward.module';
 import { OrderDetailModule } from './order_detail/order_detail.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OrderDetailModule } from './order_detail/order_detail.module';
     ToppingModule,
     RewardModule,
     OrderDetailModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

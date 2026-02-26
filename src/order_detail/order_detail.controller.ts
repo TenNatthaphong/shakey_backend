@@ -1,15 +1,9 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { OrderDetailService } from './order_detail.service';
-import { CreateOrderDetailDto } from './dto/create_order_detail.dto';
 
 @Controller('order-detail')
 export class OrderDetailController {
     constructor(private readonly orderDetailService: OrderDetailService) { }
-
-    @Post()
-    async createOrderDetails(@Body() createOrderDetails: CreateOrderDetailDto[]) {
-        return this.orderDetailService.createOrderDetails(createOrderDetails);
-    }
 
     @Get(':order_id')
     async getOrderDetail(@Param('order_id') order_id: string) {

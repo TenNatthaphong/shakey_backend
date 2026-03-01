@@ -17,15 +17,15 @@ export class AddressService {
         } 
       })
     };
-    async createAddress(user_id: string, createAddressDto: CreateAddressDto) {
+    async addAddress(user_id: string, createAddressDto: CreateAddressDto) {
       return this.prisma.address.create({
         data: { user_id, ...createAddressDto },
       });
     }
   
-    async updateAddress(address_id: string,updateAddressDto: UpdateAddressDto) {
+    async updateAddress(updateAddressDto: UpdateAddressDto) {
       return this.prisma.address.update({
-        where: { address_id : address_id},
+        where: { address_id : updateAddressDto.address_id},
         data : updateAddressDto,
       });
     }

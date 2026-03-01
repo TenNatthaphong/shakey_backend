@@ -14,10 +14,10 @@ model UserAuth {
   password_hash      String?
   created_at         DateTime     @default(now())
   hashedRefreshToken String?
-  reset_token_hash   String?
-  reset_token_expiry DateTime?
-  otp_hash           String?
   otp_expiry         DateTime?
+  otp_hash           String?
+  reset_token_expiry DateTime?
+  reset_token_hash   String?
   users              User         @relation(fields: [user_id], references: [user_id], map: "UserAuth_user_id_fkey")
 
   @@unique([provider, provider_user_id])
@@ -31,16 +31,14 @@ model User {
   firstname            String?
   lastname             String?
   phone                String?
+  member               Member_level @default(Bronze)
   birthday             DateTime?    @db.Date
-  pin                  Int?
   point                Int          @default(0)
   total_cups_purchased Int          @default(0)
   created_at           DateTime     @default(now())
   updated_at           DateTime     @updatedAt
-  is_verified          Boolean      @default(false)
   addresses            Address[]
   favorites            Favorite[]
-  member               Member?
   orders               Order[]
   user_auth            UserAuth?
   user_rewards         UserReward[]
@@ -89,26 +87,20 @@ model Reward {
 }
 
 model UserReward {
-  user_id   String @db.Uuid
-  reward_id String @db.Uuid
-  reward    Reward @relation(fields: [reward_id], references: [reward_id], onDelete: Cascade, onUpdate: NoAction)
-  user      User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  user_id       String    @db.Uuid
+  reward_id     String    @db.Uuid
+  created_at    DateTime  @default(now())
+  expired_at    DateTime?
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reward_status RewardStatus @default(ACTIVE)
+  used_at       DateTime?
+  reward        Reward    @relation(fields: [reward_id], references: [reward_id])
+  user          User      @relation(fields: [user_id], references: [user_id])
 
-  @@id([user_id, reward_id])
+  @@unique([user_id, reward_id])
   @@map("user_rewards")
 }
 
-model Member {
-  member_id  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id    String       @unique @db.Uuid
-  start_date DateTime?    @db.Date
-  exp_date   DateTime?    @db.Date
-  created_at DateTime?    @default(now()) @db.Timestamp(6)
-  level      Member_level @default(Bronze)
-  user       User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@map("members")
-}
 
 model Menu {
   menu_id    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -217,4 +209,10 @@ enum Size {
 enum AuthProvider {
   LOCAL
   GOOGLE
+}
+
+enum RewardStatus {
+  ACTIVE
+  USED
+  EXPIRED
 }

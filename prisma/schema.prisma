@@ -31,12 +31,12 @@ model User {
   firstname            String?
   lastname             String?
   phone                String?
-  member               Member_level @default(Bronze)
   birthday             DateTime?    @db.Date
   point                Int          @default(0)
   total_cups_purchased Int          @default(0)
   created_at           DateTime     @default(now())
   updated_at           DateTime     @updatedAt
+  member               Member_level @default(Bronze)
   addresses            Address[]
   favorites            Favorite[]
   orders               Order[]
@@ -87,20 +87,19 @@ model Reward {
 }
 
 model UserReward {
-  user_id       String    @db.Uuid
-  reward_id     String    @db.Uuid
-  created_at    DateTime  @default(now())
+  user_id       String       @db.Uuid
+  reward_id     String       @db.Uuid
+  created_at    DateTime     @default(now())
   expired_at    DateTime?
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   reward_status RewardStatus @default(ACTIVE)
   used_at       DateTime?
-  reward        Reward    @relation(fields: [reward_id], references: [reward_id])
-  user          User      @relation(fields: [user_id], references: [user_id])
+  reward        Reward       @relation(fields: [reward_id], references: [reward_id])
+  user          User         @relation(fields: [user_id], references: [user_id])
 
   @@unique([user_id, reward_id])
   @@map("user_rewards")
 }
-
 
 model Menu {
   menu_id    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

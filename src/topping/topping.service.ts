@@ -3,15 +3,15 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ToppingService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAllToppings() {
-    return this.prisma.topping.findMany(
-      {select: {
+    return this.prisma.topping.findMany({
+      select: {
+        topping_id: true,
         name: true,
         price: true,
-      }}
-    );
+      },
+    });
   }
-  
 }

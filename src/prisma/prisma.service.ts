@@ -21,9 +21,9 @@ constructor() {
   async onModuleInit() {
     try {
       await this.$connect();
-      this.logger.log('✅ Database connected successfully via Adapter');
+      this.logger.log('✅ connected');
     } catch (error) {
-      this.logger.error('❌ Database connection failed', error);
+      this.logger.error('❌ connection failed', error);
     }
   }
 }

@@ -91,21 +91,21 @@ export class AuthService {
 
   //Local Register
   async register(dto: RegisterDto) {
-    const { email, password } = dto;
+    const { email, password, firstname, lastname, phone } = dto;
 
     const existing = await this.prisma.user.findUnique({
       where: { email },
     });
 
     if (existing) {
-      throw new BadRequestException('Email already exists');
+      throw new BadRequestException('อีเมลนี้ถูกใช้งานแล้ว');
     }
 
     const hashed = await crypto.createHash('sha256').update(password).digest('hex');
 
     const result = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
-        data: { email },
+        data: { email, firstname, lastname, phone },
       });
 
       await tx.userAuth.create({

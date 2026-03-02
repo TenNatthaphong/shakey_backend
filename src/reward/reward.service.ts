@@ -42,6 +42,19 @@ export class RewardService {
       throw new BadRequestException('Not enough points');
     }
 
+    // Check if user already has this reward active
+    const existingReward = await this.prisma.userReward.findFirst({
+      where: {
+        user_id: userId,
+        reward_id: rewardId,
+        reward_status: 'ACTIVE',
+      },
+    });
+
+    if (existingReward) {
+      throw new BadRequestException('Reward already redeemed and still active');
+    }
+
     // Use a transaction to ensure atomic update
     return this.prisma.$transaction(async (tx) => {
       // Deduct points
@@ -60,6 +73,7 @@ export class RewardService {
           user_id: userId,
           reward_id: rewardId,
           reward_status: 'ACTIVE',
+          expired_at: reward.exp_date,
         },
       });
     });
@@ -79,7 +93,16 @@ export class RewardService {
     }
 
     if (userReward.reward_status !== 'ACTIVE') {
-      throw new BadRequestException('Reward is not active');
+      throw new BadRequestException('Reward is not active or already used');
+    }
+
+    if (userReward.expired_at && userReward.expired_at < new Date()) {
+      // Update status to EXPIRED if we detect it's past due
+      await this.prisma.userReward.update({
+        where: { id: userRewardId },
+        data: { reward_status: 'EXPIRED' },
+      });
+      throw new BadRequestException('Reward has expired');
     }
 
     return this.prisma.userReward.update({

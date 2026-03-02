@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   controllers: [RewardController],
-  providers: [RewardService, PrismaService]
+  providers: [RewardService, PrismaService],
+  exports: [RewardService],
 })
 export class RewardModule {}

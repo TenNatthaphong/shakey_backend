@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Patch, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { RewardService } from './reward.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('reward')
 export class RewardController {
@@ -10,18 +11,10 @@ export class RewardController {
     return this.rewardService.findAllReward();
   }
 
-  @Get('my')
-  async getMyRewards(@Query('userId') userId: string) {
-    return this.rewardService.findUserRewards(userId);
+  @UseGuards(AuthGuard)
+  @Get('my_rewards')
+  async getUserReward(@Req() req) {
+    return this.rewardService.findUserRewards(req.user.sub);
   }
 
-  @Post('redeem')
-  async redeem(@Body() body: { userId: string; rewardId: string }) {
-    return this.rewardService.redeemReward(body.userId, body.rewardId);
-  }
-
-  @Patch('use/:id')
-  async use(@Param('id') id: string, @Body('userId') userId: string) {
-    return this.rewardService.useReward(userId, id);
-  }
 }

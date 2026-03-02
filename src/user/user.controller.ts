@@ -2,14 +2,17 @@ import { Controller, Get, Post, UseGuards, Req, Body, Logger } from '@nestjs/com
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddressService } from 'src/address/address.service';
+import { RewardService } from 'src/reward/reward.service';
 import { UpdateAddressDto } from 'src/address/dto/update_address.dto';
-
+import { MenuService } from 'src/menu/menu.service';
 @Controller('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
   constructor(private readonly userService: UserService,
-    private readonly addressService: AddressService
+    private readonly addressService: AddressService,
+    private readonly rewardService: RewardService,
+    private readonly menuService: MenuService
   ) { }
 
   //Profile part
@@ -25,32 +28,42 @@ export class UserController {
     return this.userService.editProfile(req.user.sub, body);
   }
 
+  @UseGuards(AuthGuard)
+  @Post('update_point')
+  updatePoint(@Req() req, @Body() body) {
+    return this.userService.updatePoint(req.user.sub, body.point);
+  }
+
   //Reward part
   @UseGuards(AuthGuard)
-  @Post('redeem_reward')
-  redeemReward(@Req() req, @Body() body) {
-    return this.userService.redeemReward(req.user.sub, body.reward_id);
+  @Get('my_rewards')
+  getMyRewards(@Req() req) {
+    return this.rewardService.findUserRewards(req.user.sub);
   }
 
   @UseGuards(AuthGuard)
-  @Post('use_reward')
-  useReward(@Body() body) {
-    return this.userService.useReward(body.user_reward_id);
+  @Post('reward/redeem')
+  redeemReward(@Req() req, @Body() body) {
+    return this.rewardService.redeemReward(req.user.sub, body.reward_id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('reward/use')
+  useReward(@Req() req, @Body() body) {
+    return this.rewardService.useReward(req.user.sub, body.user_reward_id);
   }
 
   //Favorite part
   @UseGuards(AuthGuard)
   @Post('favorite/add')
   addFavorite(@Req() req, @Body() body) {
-    this.logger.log(`Adding favorite: userId=${req.user.sub}, menuId=${body.menu_id}`);
-    return this.userService.addFavorite(req.user.sub, body.menu_id);
+    return this.menuService.addFavorite(req.user.sub, body.menu_id);
   }
 
   @UseGuards(AuthGuard)
   @Post('favorite/remove')
   removeFavorite(@Req() req, @Body() body) {
-    this.logger.log(`Removing favorite: userId=${req.user.sub}, menuId=${body.menu_id}`);
-    return this.userService.removeFavorite(req.user.sub, body.menu_id);
+    return this.menuService.removeFavorite(req.user.sub, body.menu_id);
   }
 
   //Address part
@@ -61,13 +74,13 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('add_address')
+  @Post('address/add')
   addAddress(@Req() req, @Body() body) {
     return this.addressService.addAddress(req.user.sub, body);
   }
 
   @UseGuards(AuthGuard)
-  @Post('delete_address')
+  @Post('address/delete')
   deleteAddress(@Body() body) {
     return this.addressService.deleteAddress(body.address_id);
   }

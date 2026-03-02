@@ -50,4 +50,24 @@ export class MenuService {
       },
     });
   }
+
+  async addFavorite(userId: string, menuId: string) {
+      return this.prisma.favorite.create({
+        data: {
+          user_id: userId,
+          menu_id: menuId
+        }
+      });
+    }
+  
+    async removeFavorite(userId: string, menuId: string) {
+      return this.prisma.favorite.delete({
+        where: {
+          user_id_menu_id: {
+            user_id: userId,
+            menu_id: menuId
+          }
+        }
+      });
+    }
 }

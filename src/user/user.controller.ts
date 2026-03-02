@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Req, Body} from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req, Body, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddressService } from 'src/address/address.service';
@@ -6,9 +6,11 @@ import { UpdateAddressDto } from 'src/address/dto/update_address.dto';
 
 @Controller('user')
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(private readonly userService: UserService,
     private readonly addressService: AddressService
-  ) {}
+  ) { }
 
   //Profile part
   @UseGuards(AuthGuard)
@@ -38,14 +40,16 @@ export class UserController {
 
   //Favorite part
   @UseGuards(AuthGuard)
-  @Post('add_favorite')
+  @Post('favorite/add')
   addFavorite(@Req() req, @Body() body) {
+    this.logger.log(`Adding favorite: userId=${req.user.sub}, menuId=${body.menu_id}`);
     return this.userService.addFavorite(req.user.sub, body.menu_id);
   }
 
   @UseGuards(AuthGuard)
-  @Post('remove_favorite')
+  @Post('favorite/remove')
   removeFavorite(@Req() req, @Body() body) {
+    this.logger.log(`Removing favorite: userId=${req.user.sub}, menuId=${body.menu_id}`);
     return this.userService.removeFavorite(req.user.sub, body.menu_id);
   }
 
@@ -70,7 +74,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Post('update_address')
-  updateAddress(@Body() dto : UpdateAddressDto) {
+  updateAddress(@Body() dto: UpdateAddressDto) {
     return this.addressService.updateAddress(dto);
   }
 }

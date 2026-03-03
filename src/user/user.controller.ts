@@ -34,6 +34,12 @@ export class UserController {
     return this.userService.updatePoint(req.user.sub, body.point);
   }
 
+  @UseGuards(AuthGuard)
+  @Post('update_cup')
+  updateCup(@Req() req, @Body() body) {
+    return this.userService.addPurchasedCups(req.user.sub, body.cups);
+  }
+
   //Reward part
   @UseGuards(AuthGuard)
   @Get('my_rewards')

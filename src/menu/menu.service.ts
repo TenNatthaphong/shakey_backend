@@ -77,13 +77,20 @@ export class MenuService {
     }
   
     async removeFavorite(userId: string, menuId: string) {
-      return this.prisma.favorite.delete({
-        where: {
-          user_id_menu_id: {
-            user_id: userId,
-            menu_id: menuId
+      try {
+        return await this.prisma.favorite.delete({
+          where: {
+            user_id_menu_id: {
+              user_id: userId,
+              menu_id: menuId
+            }
           }
+        });
+      } catch (error) {
+        if (error.code === 'P2025') {
+          return null;
         }
-      });
+        throw error;
+      }
     }
 }

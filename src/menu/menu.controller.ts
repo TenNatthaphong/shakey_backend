@@ -18,9 +18,7 @@ export class MenuController {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       try {
-        const payload = await this.jwtService.verifyAsync(token, {
-          secret: process.env.JWT_SECRET,
-        });
+        const payload = await this.jwtService.verifyAsync(token);
         userId = payload.sub;
       } catch (e) {
         // Token invalid, treat as guest

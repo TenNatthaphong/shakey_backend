@@ -41,9 +41,9 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found');
 
     let newLevel = user.member;
-    if (user.total_cups_purchased >= 50) {
+    if (user.total_cups_purchased >= 150) {
       newLevel = Member_level.Gold;
-    } else if (user.total_cups_purchased >= 20) {
+    } else if (user.total_cups_purchased >= 50) {
       newLevel = Member_level.Silver;
     }
 
@@ -55,6 +55,15 @@ export class UserService {
     }
 
     return user;
+  }
+
+  //update purchased cups
+  async addPurchasedCups(userId: string, cups: number) {
+    await this.prisma.user.update({
+      where: { user_id: userId },
+      data: { total_cups_purchased: { increment: cups } },
+    });
+    return this.updateMember(userId);
   }
 
   //update member point

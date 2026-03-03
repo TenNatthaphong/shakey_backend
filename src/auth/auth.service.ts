@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { OAuth2Client } from 'google-auth-library';
@@ -9,9 +9,13 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService,
+  private readonly logger = new Logger(AuthService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly mailerService: MailerService) { }
+    private readonly mailerService: MailerService,
+  ) { }
 
   //generate jwt token
   async getTokens(userId: string, email: string) {
@@ -229,10 +233,13 @@ export class AuthService {
       data: { otp_hash: hash, otp_expiry: expireAt },
     });
 
-    await this.mailerService.sendMail({
+    // Send email asynchronously to don't block the response
+    this.mailerService.sendMail({
       to: email,
       subject: 'Forgot Password',
       text: `This task created for test Shakey app only\nYour OTP is: ${otp}`,
+    }).catch(err => {
+      this.logger.error('Failed to send forgot password email:', err);
     });
 
     return { otp };

@@ -13,17 +13,17 @@ import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
-    UserModule,
+    AddressModule,
     AuthModule,
-    PrismaModule,
-    MenuModule,
     BannerModule,
     BranchModule,
-    AddressModule,
-    ToppingModule,
-    RewardModule,
-    OrderDetailModule,
+    MenuModule,
     OrderModule,
+    OrderDetailModule,
+    PrismaModule,
+    RewardModule,
+    ToppingModule,
+    UserModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

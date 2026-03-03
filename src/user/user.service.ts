@@ -5,7 +5,7 @@ import { EditProfileDto } from './dto/update_profile.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findById(userId: string) {
     return this.prisma.user.findUnique({
@@ -14,13 +14,14 @@ export class UserService {
         favorites: true,
         orders: {
           orderBy: { created_at: 'desc' },
-          take: 5
+          take: 5,
         },
-        user_rewards: true,
+        user_rewards: {
+          include: { reward: true },
+        },
       },
     });
   }
-
 
   async editProfile(userId: string, body: EditProfileDto) {
     if (body.birthday) {
@@ -28,35 +29,32 @@ export class UserService {
     }
     return this.prisma.user.update({
       where: { user_id: userId },
-      data: body
+      data: body,
     });
   }
 
-
   async updateMember(userId: string) {
-    
     const user = await this.prisma.user.findUnique({
-      where: { user_id: userId }
+      where: { user_id: userId },
     });
 
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('User not found');
 
-    if(user.total_cups_purchased >= 20){
+    let newLevel = user.member;
+    if (user.total_cups_purchased >= 50) {
+      newLevel = Member_level.Gold;
+    } else if (user.total_cups_purchased >= 20) {
+      newLevel = Member_level.Silver;
+    }
+
+    if (newLevel !== user.member) {
       return this.prisma.user.update({
         where: { user_id: userId },
-        data: {
-          member: Member_level.Silver
-        }
+        data: { member: newLevel },
       });
     }
-    else if(user.total_cups_purchased >= 50){
-      return this.prisma.user.update({
-        where: { user_id: userId },
-        data: {
-          member: Member_level.Gold
-        }
-      });
-    }
+
+    return user;
   }
 
   //update member point

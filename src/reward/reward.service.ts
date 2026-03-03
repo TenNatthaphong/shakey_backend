@@ -5,8 +5,10 @@ import { PrismaService } from '../prisma/prisma.service';
 export class RewardService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async findAllReward() {
-    return this.prisma.reward.findMany();
+  async findAllReward(take?: number) {
+    return this.prisma.reward.findMany({
+      take: take,
+    });
   }
 
   async findUserRewards(userId: string) {

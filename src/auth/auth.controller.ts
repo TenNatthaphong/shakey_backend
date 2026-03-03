@@ -1,4 +1,4 @@
-  import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+  import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
   import { AuthService } from './auth.service';
   import { AuthGuard } from './auth.guard';
   import { RegisterDto } from './dto/register.dto';
@@ -24,8 +24,8 @@
     }
 
     @Post('google')
-    async googleLogin(@Body('id_token') idToken: string) {
-      return this.authService.googleLogin(idToken);
+    async googleLogin(@Body() dto: { code: string; redirectUri: string }) {
+      return this.authService.googleLogin(dto.code, dto.redirectUri);
     }
 
     @UseGuards(AuthGuard)

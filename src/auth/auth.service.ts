@@ -48,49 +48,67 @@ export class AuthService {
   );
 
   //google register/login
-  async googleLogin(idToken: string) {
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+  async googleLogin(code: string, redirectUri: string) {
+    const client = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      redirectUri
+    );
 
-    const payload = ticket.getPayload();
+    try {
+      const { tokens } = await client.getToken(code);
+      const idToken = tokens.id_token;
 
-    if (!payload || !payload.email) {
-      throw new UnauthorizedException('Invalid Google token');
-    }
-    const { email, sub } = payload;
+      if (!idToken) {
+        throw new UnauthorizedException('ไม่สามารถดึงข้อมูล idToken จาก Google ได้');
+      }
 
-    let user = await this.prisma.user.findUnique({
-      where: { email },
-      include: { user_auth: true },
-    });
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
 
-    if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          email,
-          user_auth: {
-            create: {
-              provider: 'GOOGLE',
-              provider_user_id: sub,
-            },
-          },
-        },
+      const payload = ticket.getPayload();
+
+      if (!payload || !payload.email) {
+        throw new UnauthorizedException('Invalid Google token');
+      }
+      const { email, sub } = payload;
+
+      let user = await this.prisma.user.findUnique({
+        where: { email },
         include: { user_auth: true },
       });
+
+      if (!user) {
+        user = await this.prisma.user.create({
+          data: {
+            email,
+            user_auth: {
+              create: {
+                provider: 'GOOGLE',
+                provider_user_id: sub,
+              },
+            },
+          },
+          include: { user_auth: true },
+        });
+      }
+
+      const newTokens = await this.getTokens(user.user_id, user.email);
+      await this.updateRefreshTokenHash(user.user_id, newTokens.refresh_token);
+
+      return {
+        ...newTokens,
+        user: {
+          user_id: user.user_id,
+          email: user.email,
+        },
+      };
+
+    } catch (error) {
+      throw new UnauthorizedException('Google Authentication Failed: ' + error.message);
     }
-
-    const tokens = await this.getTokens(user.user_id, user.email);
-    await this.updateRefreshTokenHash(user.user_id, tokens.refresh_token);
-
-    return {
-      ...tokens,
-      user: {
-        user_id: user.user_id,
-        email: user.email,
-      },
-    };
   }
 
   //Local Register

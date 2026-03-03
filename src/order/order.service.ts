@@ -43,7 +43,20 @@ export class OrderService {
 
   async getOrderHistory(user_id: string) {
     return this.prisma.order.findMany({
-      where: { user_id }
+      where: { user_id },
+      orderBy: { created_at: 'desc' },
+      take: 5,
+      include: {
+        order_details: {
+          include: {
+            variant: {
+              include: {
+                menu: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 }

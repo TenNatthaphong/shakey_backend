@@ -7,8 +7,8 @@ export class RewardController {
   constructor(private readonly rewardService: RewardService) { }
 
   @Get()
-  async getAllReward() {
-    return this.rewardService.findAllReward();
+  async getAllReward(@Query('take') take?: string) {
+    return this.rewardService.findAllReward(take ? parseInt(take) : undefined);
   }
 
   @UseGuards(AuthGuard)

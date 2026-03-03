@@ -1,4 +1,5 @@
-import { Controller, Get, Post, UseGuards, Req, Body, Logger } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req, Body } from '@nestjs/common';
+import { EditProfileDto } from './dto/update_profile.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddressService } from 'src/address/address.service';
@@ -7,12 +8,11 @@ import { UpdateAddressDto } from 'src/address/dto/update_address.dto';
 import { MenuService } from 'src/menu/menu.service';
 @Controller('user')
 export class UserController {
-  private readonly logger = new Logger(UserController.name);
-
-  constructor(private readonly userService: UserService,
+  constructor(
+    private readonly userService: UserService,
     private readonly addressService: AddressService,
     private readonly rewardService: RewardService,
-    private readonly menuService: MenuService
+    private readonly menuService: MenuService,
   ) { }
 
   //Profile part
@@ -24,7 +24,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Post('edit_profile')
-  editProfile(@Req() req, @Body() body) {
+  editProfile(@Req() req, @Body() body: EditProfileDto) {
     return this.userService.editProfile(req.user.sub, body);
   }
 

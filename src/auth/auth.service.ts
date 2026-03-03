@@ -229,10 +229,13 @@ export class AuthService {
       data: { otp_hash: hash, otp_expiry: expireAt },
     });
 
-    await this.mailerService.sendMail({
+    // Send email asynchronously to don't block the response
+    this.mailerService.sendMail({
       to: email,
       subject: 'Forgot Password',
       text: `This task created for test Shakey app only\nYour OTP is: ${otp}`,
+    }).catch(err => {
+      console.error('Failed to send forgot password email:', err);
     });
 
     return { otp };

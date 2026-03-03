@@ -9,14 +9,14 @@ export class OrderService {
   async createOrder(createOrder: CreateOrderDto) {
     return this.prisma.order.create({
       data: {
-        user_id: createOrder.user_id,
+        user_id: createOrder.user_id as string,
         delivery: createOrder.delivery,
         total_price: createOrder.total_price,
         order_details: {
           create: createOrder.order_details.map(detail => {
             const { topping_ids, ...data } = detail;
             return {
-              ...data,
+              ...(data as any),
               order_detail_toppings: {
                 create: topping_ids.map(id => ({
                   topping_id: id
@@ -25,7 +25,7 @@ export class OrderService {
             };
           })
         }
-      }
+      } as any
     });
   }
 
@@ -38,6 +38,12 @@ export class OrderService {
   async deleteOrder(order_id: string) {
     return this.prisma.order.delete({
       where: { order_id }
+    });
+  }
+
+  async getOrderHistory(user_id: string) {
+    return this.prisma.order.findMany({
+      where: { user_id }
     });
   }
 }

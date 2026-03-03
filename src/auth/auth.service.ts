@@ -9,21 +9,21 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService, 
+  constructor(private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly mailerService: MailerService){}
-  
+    private readonly mailerService: MailerService) { }
+
   //generate jwt token
   async getTokens(userId: string, email: string) {
     const payload = { sub: userId, email };
     const [at, rt] = await Promise.all([
       this.jwt.signAsync(payload, {
         secret: process.env.JWT_SECRET,
-        expiresIn: '15m',
+        expiresIn: '1d',
       }),
       this.jwt.signAsync(payload, {
         secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: '7d',
+        expiresIn: '30d',
       }),
     ]);
 
@@ -221,7 +221,7 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
       expiresIn: '15m',
     });
- 
+
     const expireAt = new Date(Date.now() + 15 * 60 * 1000);
     const hash = await crypto.createHash('sha256').update(otp).digest('hex');
     await this.prisma.userAuth.update({
@@ -241,8 +241,8 @@ export class AuthService {
   async otpCheck(email: string, otp: string) {
 
     const user = await this.prisma.user.findUnique({
-    where: { email: email },
-    include: { user_auth: true },
+      where: { email: email },
+      include: { user_auth: true },
     });
 
     if (!user || !user.user_auth) {
@@ -250,9 +250,9 @@ export class AuthService {
     }
 
     if (
-    !user.user_auth.otp_hash ||
-    !user.user_auth.otp_expiry ||
-    new Date() > user.user_auth.otp_expiry
+      !user.user_auth.otp_hash ||
+      !user.user_auth.otp_expiry ||
+      new Date() > user.user_auth.otp_expiry
     ) {
       throw new BadRequestException('OTP expired');
     }
@@ -269,8 +269,8 @@ export class AuthService {
     //update otp hash
     await this.prisma.userAuth.update({
       where: { user_id: user.user_id },
-      data: { 
-        otp_hash: null, 
+      data: {
+        otp_hash: null,
         otp_expiry: null,
         reset_token_hash: hashResetToken,
         reset_token_expiry: expireAt,
@@ -278,32 +278,32 @@ export class AuthService {
     });
     return { resetToken };
   }
-  
+
   async changePassword(userId: string, oldPassword: string, newPassword: string) {
 
-  const auth = await this.prisma.userAuth.findUnique({
-    where: { user_id: userId },
-  });
+    const auth = await this.prisma.userAuth.findUnique({
+      where: { user_id: userId },
+    });
 
-  const isMatch = await crypto.createHash('sha256').update(oldPassword).digest('hex') === auth?.password_hash;
+    const isMatch = await crypto.createHash('sha256').update(oldPassword).digest('hex') === auth?.password_hash;
 
-  if (!isMatch) {
-    throw new BadRequestException('Invalid password');
+    if (!isMatch) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    await this.updatePassword(userId, newPassword);
+
+    return { message: 'Password changed successfully' };
   }
 
-  await this.updatePassword(userId, newPassword);
-
-  return { message: 'Password changed successfully' };
-}
-
   async resetPassword(resetToken: string, newPassword: string) {
-  
+
     const hashResetToken = await crypto.createHash('sha256').update(resetToken).digest('hex');
     const auth = await this.prisma.userAuth.findFirst({
-    where: {
-      reset_token_hash: hashResetToken,
-      reset_token_expiry: { gte: new Date() },
-    },
+      where: {
+        reset_token_hash: hashResetToken,
+        reset_token_expiry: { gte: new Date() },
+      },
     });
 
     if (!auth) {
@@ -316,16 +316,16 @@ export class AuthService {
   }
 
   private async updatePassword(userId: string, newPassword: string) {
-  const hashed = await crypto.createHash('sha256').update(newPassword).digest('hex');
+    const hashed = await crypto.createHash('sha256').update(newPassword).digest('hex');
 
-  await this.prisma.userAuth.update({
-    where: { user_id: userId },
-    data: {
-      password_hash: hashed,
-      reset_token_hash: null,
-      reset_token_expiry: null,
-      hashedRefreshToken: null,
-    },
-  });
-}
+    await this.prisma.userAuth.update({
+      where: { user_id: userId },
+      data: {
+        password_hash: hashed,
+        reset_token_hash: null,
+        reset_token_expiry: null,
+        hashedRefreshToken: null,
+      },
+    });
+  }
 }

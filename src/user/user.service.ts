@@ -27,10 +27,23 @@ export class UserService {
     if (body.birthday) {
       body.birthday = new Date(body.birthday);
     }
-    return this.prisma.user.update({
-      where: { user_id: userId },
-      data: body,
-    });
+    try {
+      return await this.prisma.user.update({
+        where: { user_id: userId },
+        data: body,
+      });
+    } catch (error) {
+      if (error.code === 'P2002') {
+        const target = error.meta?.target;
+        if (target && target.includes('username')) {
+          throw new BadRequestException('Username is already taken');
+        }
+        if (target && target.includes('email')) {
+          throw new BadRequestException('Email is already taken');
+        }
+      }
+      throw error;
+    }
   }
 
   async updateMember(userId: string) {

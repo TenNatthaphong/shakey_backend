@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Req, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req, Body, Patch } from '@nestjs/common';
 import { EditProfileDto } from './dto/update_profile.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -23,26 +23,26 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('edit_profile')
+  @Patch('profile/edit')
   editProfile(@Req() req, @Body() body: EditProfileDto) {
     return this.userService.editProfile(req.user.sub, body);
   }
 
   @UseGuards(AuthGuard)
-  @Post('update_point')
+  @Patch('point/update')
   updatePoint(@Req() req, @Body() body) {
     return this.userService.updatePoint(req.user.sub, body.point);
   }
 
   @UseGuards(AuthGuard)
-  @Post('update_cup')
+  @Patch('cup/update')
   updateCup(@Req() req, @Body() body) {
     return this.userService.addPurchasedCups(req.user.sub, body.cups);
   }
 
   //Reward part
   @UseGuards(AuthGuard)
-  @Get('my_rewards')
+  @Get('reward')
   getMyRewards(@Req() req) {
     return this.rewardService.findUserRewards(req.user.sub);
   }
@@ -92,7 +92,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('update_address')
+  @Patch('address/update')
   updateAddress(@Body() dto: UpdateAddressDto) {
     return this.addressService.updateAddress(dto);
   }

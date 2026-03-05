@@ -3,8 +3,7 @@ import { Sweetness } from "@prisma/client";
 
 export class CreateOrderDetailDto {
     @IsString()
-    @IsOptional()
-    variant_id?: string;
+    variant_id: string;
 
     @IsNumber()
     quantity: number;

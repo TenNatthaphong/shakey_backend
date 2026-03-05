@@ -10,8 +10,7 @@ export class OrderController {
   @UseGuards(AuthGuard)
   @Post()
   async createOrder(@Body() createOrder: CreateOrderDto, @Req() req: any) {
-    createOrder.user_id = req.user.sub;
-    return this.orderService.createOrder(createOrder);
+    return this.orderService.createOrder(createOrder, req.user.sub);
   }
 
   @UseGuards(AuthGuard)

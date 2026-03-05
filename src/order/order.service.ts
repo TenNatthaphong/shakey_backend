@@ -6,10 +6,10 @@ import { CreateOrderDto } from './dto/create_order.dto';
 export class OrderService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async createOrder(createOrder: CreateOrderDto) {
+  async createOrder(createOrder: CreateOrderDto, user_id: string) {
     return this.prisma.order.create({
       data: {
-        user_id: createOrder.user_id as string,
+        user_id: user_id,
         delivery: createOrder.delivery,
         total_price: createOrder.total_price,
         order_details: {

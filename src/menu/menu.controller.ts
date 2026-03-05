@@ -10,18 +10,18 @@ export class MenuController {
 
   @UseGuards(AuthGuard)
   @Get()
-  async getMenus(@Req() req) {
+  async findAllMenu(@Req() req) {
     return this.menuService.findAllMenu(req.user.sub);
   }
 
   @Get(':menu_id/variants')
-  async getMenuVariant(@Param('menu_id') menu_id: string) {
+  async findMenuVariant(@Param('menu_id') menu_id: string) {
     return this.menuService.findMenuVariant(menu_id);
   }
 
   @UseGuards(AuthGuard)
   @Get('favorite')
-  async getFavoriteMenus(@Req() req) {
+  async findFavoriteMenus(@Req() req) {
     return this.menuService.findFavoriteMenus(req.user.sub);
   }
 

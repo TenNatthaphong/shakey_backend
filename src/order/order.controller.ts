@@ -19,13 +19,4 @@ export class OrderController {
     return this.orderService.getOrderHistory(req.user.sub);
   }
 
-  @Delete(':order_id')
-  async deleteOrder(@Param('order_id') order_id: string) {
-    return this.orderService.deleteOrder(order_id);
-  }
-
-  @Get(':user_id')
-  async getOrder(@Param('user_id') user_id: string) {
-    return this.orderService.getOrder(user_id);
-  }
 }

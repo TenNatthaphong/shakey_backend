@@ -86,7 +86,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('address/delete')
+  @Delete('address/delete')
   deleteAddress(@Body() body) {
     return this.addressService.deleteAddress(body.address_id);
   }

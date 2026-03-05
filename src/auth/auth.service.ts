@@ -161,7 +161,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     //find user auth by user_id
@@ -170,14 +170,14 @@ export class AuthService {
     });
 
     if (!auth) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     //compare password
     const valid = await crypto.createHash('sha256').update(password).digest('hex') === auth.password_hash;
 
     if (!valid) {
-      throw new BadRequestException('Invalid password');
+      throw new UnauthorizedException('Invalid password');
     }
 
     const tokens = await this.getTokens(user.user_id, user.email);
@@ -234,7 +234,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -271,7 +271,7 @@ export class AuthService {
     });
 
     if (!user || !user.user_auth) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     if (
@@ -279,13 +279,13 @@ export class AuthService {
       !user.user_auth.otp_expiry ||
       new Date() > user.user_auth.otp_expiry
     ) {
-      throw new BadRequestException('OTP expired');
+      throw new UnauthorizedException('OTP expired');
     }
 
     const isMatch = await crypto.createHash('sha256').update(otp).digest('hex') === user.user_auth.otp_hash;
 
     if (!isMatch) {
-      throw new BadRequestException('Invalid OTP');
+      throw new UnauthorizedException('Invalid OTP');
     }
 
     const resetToken = crypto.randomUUID();
@@ -313,7 +313,7 @@ export class AuthService {
     const isMatch = await crypto.createHash('sha256').update(oldPassword).digest('hex') === auth?.password_hash;
 
     if (!isMatch) {
-      throw new BadRequestException('Invalid password');
+      throw new UnauthorizedException('Invalid password');
     }
 
     await this.updatePassword(userId, newPassword);
@@ -332,8 +332,8 @@ export class AuthService {
     });
 
     if (!auth) {
-      throw new BadRequestException('Invalid or expired token');
-    }
+      throw new UnauthorizedException('Invalid or expired token');
+    }     
 
     await this.updatePassword(auth.user_id, newPassword);
 

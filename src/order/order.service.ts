@@ -29,18 +29,6 @@ export class OrderService {
     });
   }
 
-  async getOrder(user_id: string) {
-    return this.prisma.order.findMany({
-      where: { user_id }
-    });
-  }
-
-  async deleteOrder(order_id: string) {
-    return this.prisma.order.delete({
-      where: { order_id }
-    });
-  }
-
   async getOrderHistory(user_id: string) {
     return this.prisma.order.findMany({
       where: { user_id },

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Req, Body, Patch } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req, Body, Patch, Delete } from '@nestjs/common';
 import { EditProfileDto } from './dto/update_profile.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -67,7 +67,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('favorite/remove')
+  @Delete('favorite/remove')
   removeFavorite(@Req() req, @Body() body) {
     return this.menuService.removeFavorite(req.user.sub, body.menu_id);
   }

@@ -18,7 +18,7 @@ model UserAuth {
   otp_hash           String?
   reset_token_expiry DateTime?
   reset_token_hash   String?
-  users              User         @relation(fields: [user_id], references: [user_id], map: "UserAuth_user_id_fkey")
+  users              User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "UserAuth_user_id_fkey")
 
   @@unique([provider, provider_user_id])
   @@map("user_auth")
@@ -155,11 +155,11 @@ model OrderDetail {
   quantity              Int
   sweetness             Sweetness?           @default(Sweet_100)
   price                 Int
-  variant_id            String?              @db.Uuid
+  variant_id            String               @db.Uuid
   note                  String?
   order_detail_toppings OrderDetailTopping[]
   order                 Order?               @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
-  variant               MenuVariant?         @relation(fields: [variant_id], references: [variant_id], onDelete: NoAction, onUpdate: NoAction)
+  variant               MenuVariant          @relation(fields: [variant_id], references: [variant_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("order_details")
 }

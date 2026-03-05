@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class MenuService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllMenu(userId?: string) {
+  async findAllMenu(userId: string) {
     const menus = await this.prisma.menu.findMany({
       select: {
         menu_id: true,
@@ -16,10 +16,6 @@ export class MenuService {
         rating: true,
       },
     });
-
-    if (!userId) {
-      return menus.map(menu => ({ ...menu, favorite: false }));
-    }
 
     const favorites = await this.prisma.favorite.findMany({
       where: { user_id: userId },

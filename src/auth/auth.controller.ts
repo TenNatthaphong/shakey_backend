@@ -1,4 +1,4 @@
-  import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+  import { Controller, Post, Body, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
   import { AuthService } from './auth.service';
   import { AuthGuard } from './auth.guard';
   import { RegisterDto } from './dto/register.dto';
@@ -19,6 +19,7 @@
     }
 
     @Post('login')
+    @HttpCode(HttpStatus.OK)
     async login(@Body() dto: LoginDto) {
       return this.authService.login(dto);
     }

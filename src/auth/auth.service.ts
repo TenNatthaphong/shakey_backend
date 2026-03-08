@@ -43,9 +43,6 @@ export class AuthService {
     });
   }
 
-  private googleClient = new OAuth2Client(
-    process.env.GOOGLE_CLIENT_ID,
-  );
 
   //google register/login
   async googleLogin(code: string, redirectUri: string) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create_order.dto';
 
@@ -7,6 +7,17 @@ export class OrderService {
   constructor(private readonly prisma: PrismaService) { }
 
   async createOrder(createOrder: CreateOrderDto, user_id: string) {
+    const variantIds = createOrder.order_details.map(d => d.variant_id);
+    const uniqueVariantIds = [...new Set(variantIds)];
+
+    const count = await this.prisma.menuVariant.count({
+      where: { variant_id: { in: uniqueVariantIds } }
+    });
+
+    if (count !== uniqueVariantIds.length) {
+      throw new BadRequestException('Some variants was not found');
+    }
+
     return this.prisma.order.create({
       data: {
         user_id: user_id,

@@ -25,9 +25,10 @@ export class AddressService {
   }
 
   async updateAddress(updateAddressDto: UpdateAddressDto) {
+    const { address_id, ...data } = updateAddressDto;
     return this.prisma.address.update({
-      where: { address_id: updateAddressDto.address_id },
-      data: updateAddressDto,
+      where: { address_id: address_id },
+      data: data,
     });
   }
 
